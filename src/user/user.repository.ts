@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { uuid } from 'uuidv4';
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UserRepository {
@@ -77,6 +77,7 @@ export class UserRepository {
         email: data.email,
         phoneNumber: data.phoneNumber,
       });
+      await this.userRepository.save(newUser);
       return newUser;
     } catch (error) {
       console.log(error);
