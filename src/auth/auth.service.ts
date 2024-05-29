@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { UserCredentialsDto } from './dto/user-credentials.dto';
-import { error } from 'console';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -11,6 +11,7 @@ export class AuthService {
     private userService: UserService,
     private jwt: JwtService,
   ) {}
+
   create = async (data: UserCredentialsDto) => {
     try {
       const existingUser = await this.userService.getUserByEmail(data.email);
@@ -18,12 +19,9 @@ export class AuthService {
         throw new HttpException(
           {
             status: 409,
-            error: 'User with this email is already registred',
+            error: 'User with this email is already registered',
           },
-          HttpStatus.NOT_FOUND,
-          {
-            cause: error,
-          },
+          HttpStatus.CONFLICT,
         );
       }
       const newUser = await this.userService.createUser(data);
@@ -34,9 +32,6 @@ export class AuthService {
             error: 'Unable to create a new user',
           },
           HttpStatus.SERVICE_UNAVAILABLE,
-          {
-            cause: error,
-          },
         );
       }
       return newUser;
@@ -55,7 +50,7 @@ export class AuthService {
       } else {
         throw new HttpException(
           {
-            status: '400',
+            status: 400,
             error: 'Invalid Credentials',
           },
           HttpStatus.BAD_REQUEST,
@@ -65,17 +60,21 @@ export class AuthService {
       throw error;
     }
   };
-  login = (user: UserCredentialsDto) => {
+
+  login = async (user: User) => {
     try {
       const payload = {
         id: user.id,
         fullName: user.fullName,
         email: user.email,
       };
+      const accessToken = await this.jwt.signAsync(payload);
       return {
         ...user,
-        accessToken: this.jwt.sign(payload),
+        accessToken,
       };
-    } catch (error) {}
+    } catch (error) {
+      throw error;
+    }
   };
 }

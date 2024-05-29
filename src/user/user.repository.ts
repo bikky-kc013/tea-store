@@ -47,6 +47,15 @@ export class UserRepository {
     try {
       const data = await this.userRepository.findOne({
         where: { email: email },
+        select: [
+          'password',
+          'createdAt',
+          'email',
+          'fullName',
+          'id',
+          'phoneNumber',
+          'updatedAt',
+        ],
       });
       return data;
     } catch (error) {
