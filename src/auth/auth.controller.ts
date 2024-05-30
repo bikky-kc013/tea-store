@@ -10,6 +10,7 @@ import { AuthService } from './auth.service';
 import { UserCredentialsDto } from './dto/user-credentials.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { refreshAuthGuard } from './guards/refresh-jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -49,6 +50,17 @@ export class AuthController {
         },
       ],
       message: 'Successfully fetched the data',
+    };
+  }
+
+  @UseGuards(refreshAuthGuard)
+  @Post('refresh')
+  async refreshToken(@Request() req) {
+    const token = await this.authService.refresh(req.user);
+    return {
+      status: 'Success',
+      accessToken: token,
+      message: 'Access token',
     };
   }
 }

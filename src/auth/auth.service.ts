@@ -68,8 +68,27 @@ export class AuthService {
         email: user.email,
       };
       const accessToken = await this.jwt.signAsync(payload);
+      const refreshToken = await this.jwt.signAsync(payload, {
+        expiresIn: '7d',
+      });
       return {
         ...user,
+        accessToken,
+        refreshToken,
+      };
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  refresh = async (user: User) => {
+    try {
+      const payload = {
+        id: user.id,
+        email: user.email,
+      };
+      const accessToken = await this.jwt.signAsync(payload);
+      return {
         accessToken,
       };
     } catch (error) {
