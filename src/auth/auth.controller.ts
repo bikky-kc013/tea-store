@@ -1,9 +1,17 @@
-import { Request, Body, Controller, Post, UseGuards } from '@nestjs/common';
+import {
+  Request,
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+  Get,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserCredentialsDto } from './dto/user-credentials.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
-@Controller('user')
+@Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
@@ -27,6 +35,20 @@ export class AuthController {
       status: 'success',
       data: response,
       message: 'Sucessfully logged in',
+    };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('data')
+  async data() {
+    return {
+      status: 'Success',
+      data: [
+        {
+          name: 'Bikky',
+        },
+      ],
+      message: 'Successfully fetched the data',
     };
   }
 }
