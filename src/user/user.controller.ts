@@ -1,7 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { UserService } from './user.service';
 
-@Controller('user')
+@Controller('api/v1/users')
 export class UserController {
   constructor(private userService: UserService) {}
   @Get()
@@ -22,7 +22,7 @@ export class UserController {
   }
 
   @Get('/:id')
-  async get(@Param() id: string) {
+  async get(@Param('id') id: string) {
     const data = await this.userService.getUserInfo(id);
     return {
       status: 'Success',

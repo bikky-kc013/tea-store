@@ -40,6 +40,13 @@ export class User {
   })
   phoneNumber: string;
 
+  @Column({
+    type: 'enum',
+    enum: ['customer'],
+    default: 'customer',
+  })
+  role: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

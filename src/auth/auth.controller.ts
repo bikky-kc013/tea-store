@@ -11,6 +11,8 @@ import { UserCredentialsDto } from './dto/user-credentials.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { refreshAuthGuard } from './guards/refresh-jwt-auth.guard';
+import { Roles } from './decorators/roles.decorators';
+import { RolesGuard } from './guards/roles.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -39,7 +41,8 @@ export class AuthController {
     };
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'customer')
   @Get('data')
   async data() {
     return {

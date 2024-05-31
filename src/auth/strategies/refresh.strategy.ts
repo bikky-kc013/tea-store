@@ -19,6 +19,7 @@ export class refreshJwtStrategy extends PassportStrategy(
       id: payload.id,
       email: payload.email,
       fullName: payload.fullName,
+      role: 'customer',
     };
   }
 }

@@ -55,6 +55,7 @@ export class UserRepository {
           'id',
           'phoneNumber',
           'updatedAt',
+          'role',
         ],
       });
       return data;
