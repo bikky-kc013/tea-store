@@ -18,7 +18,7 @@ import { RolesGuard } from './guards/roles.guard';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Post('/register')
+  @Post('customer/register')
   async register(@Body() data: UserCredentialsDto) {
     const datas = await this.authService.create(data);
     const { password, ...result } = datas;

@@ -4,6 +4,7 @@ import { UserService } from './user.service';
 @Controller('api/v1/users')
 export class UserController {
   constructor(private userService: UserService) {}
+
   @Get()
   async getAll() {
     const data = await this.userService.getAllUsers();

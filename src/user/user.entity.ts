@@ -21,8 +21,8 @@ export class User {
 
   @Column({
     type: 'varchar',
-    select: false,
     length: 255,
+    select: false,
   })
   password: string;
 
@@ -42,8 +42,8 @@ export class User {
 
   @Column({
     type: 'enum',
-    enum: ['customer'],
-    default: 'customer',
+    enum: ['user'],
+    default: 'user',
   })
   role: string;
 
