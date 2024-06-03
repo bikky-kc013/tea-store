@@ -11,7 +11,7 @@ export class UserRepository {
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
   //Get user by id
-  getById = async (id: string) => {
+  getById = async (id: string): Promise<User> => {
     try {
       const data = await this.userRepository.findOne({ where: { id: id } });
       return data;

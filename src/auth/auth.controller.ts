@@ -11,7 +11,7 @@ import { UserCredentialsDto } from './dto/user-credentials.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { refreshAuthGuard } from './guards/refresh-jwt-auth.guard';
-import { Roles } from './decorators/roles.decorators';
+import { Roles } from '../shared/decorators/roles.decorators';
 import { RolesGuard } from './guards/roles.guard';
 
 @Controller('auth')

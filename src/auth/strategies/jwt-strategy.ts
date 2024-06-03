@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
@@ -12,10 +12,20 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
   async validate(payload: any) {
-    return {
-      id: payload.id,
-      email: payload.email,
-      role: payload.role,
-    };
+    try {
+      if (!payload) {
+        throw new HttpException(
+          'Invalid or expired token headers',
+          HttpStatus.FORBIDDEN,
+        );
+      }
+      return {
+        id: payload.id,
+        email: payload.email,
+        role: payload.role,
+      };
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
