@@ -58,6 +58,7 @@ export class AdminRepository {
         where: {
           username,
         },
+        select: ['username', 'password', 'role', 'id'],
       });
       return admin;
     } catch (error) {

@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { AdminDto } from './dto/admin.dto';
 
@@ -27,6 +35,7 @@ export class AdminController {
     return this.adminService.findById(id);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post()
   async createAdmin(@Body() admin: AdminDto) {
     const newAdmin = await this.adminService.create(admin);

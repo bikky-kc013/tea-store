@@ -3,10 +3,12 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UserModule } from '../user/user.module';
 import { JwtModule } from '@nestjs/jwt';
-import { LocalStrategy } from './strategies/local-strategy';
+import { LocalUserStrategy } from './strategies/local-user-strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt-strategy';
 import { refreshJwtStrategy } from './strategies/refresh.strategy';
+import { AdminModule } from '../admin/admin.module';
+import { LocalAdminStrategy } from './strategies/local-admin-strategy';
 
 console.log(process.env.JWT_SECRET);
 
@@ -14,6 +16,7 @@ console.log(process.env.JWT_SECRET);
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
     UserModule,
+    AdminModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: {
@@ -22,7 +25,13 @@ console.log(process.env.JWT_SECRET);
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, refreshJwtStrategy, JwtStrategy],
+  providers: [
+    AuthService,
+    LocalUserStrategy,
+    LocalAdminStrategy,
+    refreshJwtStrategy,
+    JwtStrategy,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

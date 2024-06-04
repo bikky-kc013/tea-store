@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AdminRepository } from './admin.repository';
 import { AdminDto } from './dto/admin.dto';
 import * as bcrypt from 'bcryptjs';
+import { serializedAdmin } from './interceptors/admin.interceptors';
 
 @Injectable()
 export class AdminService {
@@ -50,7 +51,7 @@ export class AdminService {
         ...admin,
         password,
       });
-      return saveAdmin;
+      return new serializedAdmin(saveAdmin);
     } catch (error) {
       throw error;
     }
@@ -58,5 +59,13 @@ export class AdminService {
   private async hashPassword(password: string): Promise<string> {
     const saltRounds = 10;
     return bcrypt.hash(password, saltRounds);
+  }
+
+  async findByUserName(username: string) {
+    const admin = await this.adminRepository.findByUserName(username);
+    if (!admin) {
+      throw new HttpException('Admin not found', HttpStatus.BAD_REQUEST);
+    }
+    return admin;
   }
 }
