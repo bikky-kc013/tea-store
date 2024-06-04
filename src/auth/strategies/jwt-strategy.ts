@@ -19,9 +19,16 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
           HttpStatus.FORBIDDEN,
         );
       }
+      if (payload.role === 'user') {
+        return {
+          id: payload.id,
+          email: payload.email,
+          role: payload.role,
+        };
+      }
       return {
         id: payload.id,
-        email: payload.email,
+        username: payload.username,
         role: payload.role,
       };
     } catch (error) {

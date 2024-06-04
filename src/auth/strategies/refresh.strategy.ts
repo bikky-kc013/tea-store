@@ -15,11 +15,19 @@ export class refreshJwtStrategy extends PassportStrategy(
     });
   }
   async validate(payload: any) {
-    return {
-      id: payload.id,
-      email: payload.email,
-      fullName: payload.fullName,
-      role: 'user',
-    };
+    if (payload.role === 'user') {
+      return {
+        id: payload.id,
+        email: payload.email,
+        fullName: payload.fullName,
+        role: 'user',
+      };
+    } else if (payload.role === 'admin') {
+      return {
+        id: payload.id,
+        username: payload.username,
+        role: 'admin',
+      };
+    }
   }
 }

@@ -65,7 +65,7 @@ export class AuthController {
   @UseGuards(refreshAuthGuard)
   @Post('admin/refresh')
   async refreshTokenAdmin(@Request() req) {
-    const token = await this.authService.refreshAdmin(req.admin);
+    const token = await this.authService.refreshAdmin(req.user);
     return {
       status: 'Success',
       accessToken: token,

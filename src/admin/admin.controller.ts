@@ -5,15 +5,21 @@ import {
   Get,
   Param,
   Post,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { AdminDto } from './dto/admin.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../shared/decorators/roles.decorators';
 
 @Controller('api/v1/admins')
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
   @Get()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   async findAll() {
     const admins = await this.adminService.findAll();
     if (!admins) {
@@ -30,12 +36,21 @@ export class AdminController {
     };
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Get(':id')
   async findById(@Param('id') id: string) {
-    return this.adminService.findById(id);
+    const admin = await this.adminService.findById(id);
+    return {
+      status: 'Success',
+      data: admin,
+      message: 'Admin created Successfully',
+    };
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Post()
   async createAdmin(@Body() admin: AdminDto) {
     const newAdmin = await this.adminService.create(admin);
