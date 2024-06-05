@@ -1,4 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { CategoryRepository } from './category.repository';
 
 @Injectable()
-export class CategoryService {}
+export class CategoryService {
+  constructor(private categoryRepository: CategoryRepository) {}
+}
