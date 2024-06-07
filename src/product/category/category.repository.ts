@@ -2,9 +2,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from './category.entity';
 import { Repository } from 'typeorm';
 import { CategoryDto } from './dto/category-insert.dto';
-import { uuid } from 'uuidv4';
 import { Injectable } from '@nestjs/common';
-
+import { v4 } from 'uuid';
 @Injectable()
 export class CategoryRepository {
   constructor(
@@ -14,7 +13,7 @@ export class CategoryRepository {
 
   async insert(category: CategoryDto, image: string): Promise<Category> {
     const save = await this.categoryRepo.save({
-      id: uuid(),
+      id: v4(),
       name: category.name,
       description: category.description,
       image,

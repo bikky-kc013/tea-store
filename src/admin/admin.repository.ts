@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Admin } from './admin.entity';
 import { AdminDto } from './dto/admin.dto';
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class AdminRepository {
@@ -43,7 +43,7 @@ export class AdminRepository {
   async create(admin: AdminDto): Promise<Admin> {
     try {
       const create = await this.adminRepo.create({
-        id: uuid(),
+        id: v4(),
         username: admin.username,
         password: admin.password,
       });
