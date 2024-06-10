@@ -1,26 +1,54 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Post,
   UploadedFile,
+  UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { multerOptions } from '../config/multer.config';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { CategoryDto } from './category/dto/category-insert.dto';
-import { CategoryService } from './category/category.service';
+import { dynamicStorage, fileFilter } from '../config/multer.config';
 
 @Controller('/api/v1/product')
 export class ProductController {
-  constructor(private readonly categoryService: CategoryService) {}
-  @Post('upload')
-  @UseInterceptors(FileInterceptor('image', multerOptions))
-  async upload(@UploadedFile() image, @Body() data: CategoryDto) {
-    const inserted = await this.categoryService.insert(data, image);
-    return {
-      status: 'Success',
-      data: inserted,
-      message: 'Successfully created category',
-    };
+  constructor() {}
+
+  @Post('upload/image')
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: dynamicStorage('./uploads/image'),
+      fileFilter,
+    }),
+  )
+  async uploadImage(
+    @UploadedFile() image: Express.Multer.File,
+    @Body() data: CategoryDto,
+  ) {
+    if (!image) {
+      throw new BadRequestException('Image file is missing');
+    }
+
+    console.log(data);
+  }
+
+  @Post('upload/pdfs')
+  @UseInterceptors(
+    FilesInterceptor('files', 10, {
+      storage: dynamicStorage('./uploads/product/pdf'),
+      fileFilter,
+    }),
+  )
+  async uploadPdfs(
+    @UploadedFiles() files: Express.Multer.File[],
+    @Body() data: CategoryDto,
+  ) {
+    if (!files || files.length === 0) {
+      throw new BadRequestException('No files uploaded');
+    }
+
+    console.log(files);
+    console.log(data);
   }
 }

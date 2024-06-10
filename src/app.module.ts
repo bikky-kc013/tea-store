@@ -22,11 +22,12 @@ import { CategoryModule } from './product/category/category.module';
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
     }),
+    ConfigModule,
+    CategoryModule,
     AdminModule,
     UserModule,
     AuthModule,
     ProductModule,
-    CategoryModule,
   ],
   controllers: [],
   providers: [],

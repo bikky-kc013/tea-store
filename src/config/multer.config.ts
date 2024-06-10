@@ -1,60 +1,25 @@
-import { extname } from 'path';
-import { existsSync, mkdirSync } from 'fs';
 import { diskStorage } from 'multer';
-import { v4 as uuid } from 'uuid';
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { extname } from 'path';
 
-export const multerConfig = {
-  dest: `./public`,
-};
-export const multerOptions = {
-  limits: {
-    fileSize: 1000000,
-  },
-  fileFilter: (req: any, file: any, cb: any) => {
-    if (file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
-      cb(null, true);
-    } else {
-      cb(
-        new HttpException(
-          `Unsupported file type ${extname(file.originalname)}`,
-          HttpStatus.BAD_REQUEST,
-        ),
-        false,
-      );
-    }
-  },
-  storage: diskStorage({
-    destination: (req: any, file: any, cb: any) => {
-      try {
-        const uploadPath = multerConfig.dest;
-        if (!existsSync(uploadPath)) {
-          mkdirSync(uploadPath, { recursive: true });
-        }
-        cb(null, uploadPath);
-      } catch (error) {
-        cb(
-          new HttpException(
-            `Error creating directory: ${error.message}`,
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          ),
-          false,
-        );
-      }
+export const dynamicStorage = (destinationPath: string) =>
+  diskStorage({
+    destination: destinationPath,
+    filename: (req, file, cb) => {
+      const name = file.originalname.split('.')[0];
+      const extension = extname(file.originalname);
+      const randomName = Array(32)
+        .fill(null)
+        .map(() => Math.round(Math.random() * 16).toString(16))
+        .join('');
+      cb(null, `${name}-${randomName}${extension}`);
     },
-    filename: (req: any, file: any, cb: any) => {
-      try {
-        const filename = `${uuid()}${extname(file.originalname)}`;
-        cb(null, filename);
-      } catch (error) {
-        cb(
-          new HttpException(
-            `Error generating filename: ${error.message}`,
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          ),
-          false,
-        );
-      }
-    },
-  }),
+  });
+
+export const fileFilter = (req: any, file: Express.Multer.File, cb: any) => {
+  const allowedMimeTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+  if (allowedMimeTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Invalid file type'), false);
+  }
 };
